@@ -36,6 +36,7 @@ subdirectories =
  WebAssembly
  X86
  XCore
+ Xtensa
  VE
 
 ; This is a special group whose required libraries are extended (by llvm-build)

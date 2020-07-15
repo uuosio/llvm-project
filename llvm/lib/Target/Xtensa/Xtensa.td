@@ -21,6 +21,11 @@ def FeatureDensity : SubtargetFeature<"density", "HasDensity", "true",
                     "Enable Density instructions">;
 def HasDensity : Predicate<"Subtarget->hasDensity()">,
                      AssemblerPredicate<"FeatureDensity">;
+
+def FeatureWindowed         : SubtargetFeature<"windowed", "HasWindowed", "true",
+                                               "Enable Xtensa Windowed Register option">;
+def HasWindowed             : Predicate<"Subtarget->hasWindowed()">,
+                                         AssemblerPredicate<"FeatureWindowed">; 
 //===----------------------------------------------------------------------===//
 // Xtensa supported processors.
 //===----------------------------------------------------------------------===//

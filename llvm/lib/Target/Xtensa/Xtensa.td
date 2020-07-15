@@ -72,6 +72,41 @@ def FeatureMAC16            : SubtargetFeature<"mac16", "HasMAC16", "true",
 def HasMAC16                : Predicate<"Subtarget->hasMAC16()">,
                                          AssemblerPredicate<"FeatureMAC16">;
 
+def FeatureDFPAccel         : SubtargetFeature<"dfpaccel", "HasDFPAccel", "true",
+                                               "Enable Xtensa Double Precision FP acceleration">;
+def HasDFPAccel             : Predicate<"Subtarget->hasDFPAccel()">,
+                                        AssemblerPredicate<"FeatureDFPAccel">;
+
+def FeatureS32C1I           : SubtargetFeature<"s32c1i", "HasS32C1I", "true",
+                                               "Enable Xtensa S32C1I option">;
+def HasS32C1I               : Predicate<"Subtarget->hasS32C1I()">,
+                                         AssemblerPredicate<"FeatureS32C1I">;
+
+def FeatureTHREADPTR         : SubtargetFeature<"threadptr", "HasTHREADPTR", "true",
+                                                "Enable Xtensa THREADPTR option">;
+def HasTHREADPTR             : Predicate<"Subtarget->hasTHREADPTR()">,
+                                          AssemblerPredicate<"FeatureTHREADPTR">;
+
+def FeatureExtendedL32R      : SubtargetFeature<"extendedl32r", "HasExtendedL32R", "true",
+                                                "Enable Xtensa Extended L32R option">;
+def HasExtendedL32R          : Predicate<"Subtarget->hasExtendedL32R()">,
+                                          AssemblerPredicate<"FeatureExtendedL32R">;
+
+def FeatureATOMCTL           : SubtargetFeature<"atomctl", "HasATOMCTL", "true",
+                                                "Enable Xtensa ATOMCTL option">;
+def HasATOMCTL               : Predicate<"Subtarget->hasATOMCTL()">,
+                                          AssemblerPredicate<"FeatureATOMCTL">;
+
+def FeatureMEMCTL           : SubtargetFeature<"atomctl", "HasMEMCTL", "true",
+                                                "Enable Xtensa MEMCTL option">;
+def HasMEMCTL               : Predicate<"Subtarget->hasMEMCTL()">,
+                                          AssemblerPredicate<"FeatureMEMCTL">;
+
+def FeatureDebug             : SubtargetFeature<"debug", "HasDebug", "true",
+                                                "Enable Xtensa Debug option">;
+def HasDebug                 : Predicate<"Subtarget->hasDebug()">,
+                                          AssemblerPredicate<"FeatureDebug">;
+
 //===----------------------------------------------------------------------===//
 // Xtensa supported processors.
 //===----------------------------------------------------------------------===//

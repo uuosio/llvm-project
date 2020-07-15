@@ -37,6 +37,21 @@ def FeatureBoolean          : SubtargetFeature<"bool", "HasBoolean", "true",
 def HasBoolean              : Predicate<"Subtarget->hasBoolean()">,
                                          AssemblerPredicate<"FeatureBoolean">;
 
+def FeatureLoop             : SubtargetFeature<"loop", "HasLoop", "true",
+                                               "Enable Xtensa Loop extension">;
+def HasLoop                 : Predicate<"Subtarget->hasLoop()">,
+                                         AssemblerPredicate<"FeatureLoop">;
+
+def FeatureSEXT             : SubtargetFeature<"sext", "HasSEXT", "true",
+                                              "Enable Xtensa Sign Extend option">;
+def HasSEXT                 : Predicate<"Subtarget->hasSEXT()">,
+                                         AssemblerPredicate<"FeatureSEXT">;
+
+def FeatureNSA              : SubtargetFeature<"nsa", "HasNSA", "true",
+                                               "Enable Xtensa NSA option">;
+def HasNSA                  : Predicate<"Subtarget->hasNSA()">,
+                                         AssemblerPredicate<"FeatureNSA">;
+
 //===----------------------------------------------------------------------===//
 // Xtensa supported processors.
 //===----------------------------------------------------------------------===//

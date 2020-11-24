@@ -61,6 +61,7 @@ class XtensaAsmParser : public MCTargetAsmParser {
   }
   bool ParseInstructionWithSR(ParseInstructionInfo &Info, StringRef Name,
                               SMLoc NameLoc, OperandVector &Operands);
+  OperandMatchResultTy parsePCRelTarget(OperandVector &Operands);
 
 public:
   enum XtensaMatchResultTy {

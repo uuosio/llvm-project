@@ -1344,6 +1344,16 @@ const char *XtensaTargetLowering::getTargetNodeName(unsigned Opcode) const {
     OPCODE(SELECT);
     OPCODE(SELECT_CC);
     OPCODE(BR_JT);
+    OPCODE(CMPUO);
+    OPCODE(CMPUEQ);
+    OPCODE(CMPULE);
+    OPCODE(CMPULT);
+    OPCODE(CMPOEQ);
+    OPCODE(CMPOLE);
+    OPCODE(CMPOLT);
+    OPCODE(MADD);
+    OPCODE(MSUB);
+    OPCODE(MOVS);
     OPCODE(MOVSP);
     OPCODE(SHL);
     OPCODE(SRA);

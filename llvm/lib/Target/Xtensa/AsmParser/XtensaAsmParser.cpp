@@ -59,6 +59,8 @@ class XtensaAsmParser : public MCTargetAsmParser {
                                         SMLoc &EndLoc) override {
     return MatchOperand_NoMatch;
   }
+  bool ParseInstructionWithSR(ParseInstructionInfo &Info, StringRef Name,
+                              SMLoc NameLoc, OperandVector &Operands);
 
 public:
   enum XtensaMatchResultTy {

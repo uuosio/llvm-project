@@ -1485,6 +1485,12 @@ static const EnumEntry<unsigned> ElfHeaderRISCVFlags[] = {
   ENUM_ENT(EF_RISCV_RVE, "RVE")
 };
 
+static const EnumEntry<unsigned> ElfHeaderXtensaFlags[] = {
+  LLVM_READOBJ_ENUM_ENT(ELF, EF_XTENSA_MACH_NONE),
+  LLVM_READOBJ_ENUM_ENT(ELF, EF_XTENSA_XT_INSN),
+  LLVM_READOBJ_ENUM_ENT(ELF, EF_XTENSA_XT_LIT)
+};
+
 static const EnumEntry<unsigned> ElfSymOtherFlags[] = {
   LLVM_READOBJ_ENUM_ENT(ELF, STV_INTERNAL),
   LLVM_READOBJ_ENUM_ENT(ELF, STV_HIDDEN),
@@ -5982,6 +5988,9 @@ template <class ELFT> void LLVMELFDumper<ELFT>::printFileHeaders() {
                    unsigned(ELF::EF_AMDGPU_MACH));
     else if (E.e_machine == EM_RISCV)
       W.printFlags("Flags", E.e_flags, makeArrayRef(ElfHeaderRISCVFlags));
+    else if (E.e_machine == EM_XTENSA)
+      W.printFlags("Flags", E.e_flags, makeArrayRef(ElfHeaderXtensaFlags),
+                   unsigned(ELF::EF_XTENSA_MACH));
     else
       W.printFlags("Flags", E.e_flags);
     W.printNumber("HeaderSize", E.e_ehsize);

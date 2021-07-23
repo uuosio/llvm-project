@@ -1080,6 +1080,6 @@ bool XtensaAsmParser::checkRegister(unsigned RegNo) {
 }
 
 // Force static initialization.
-extern "C" void LLVMInitializeXtensaAsmParser() {
+extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeXtensaAsmParser() {
   RegisterMCAsmParser<XtensaAsmParser> X(TheXtensaTarget);
 }

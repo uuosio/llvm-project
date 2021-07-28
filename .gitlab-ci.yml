@@ -13,7 +13,7 @@ variables:
   PLATFORM_NAME_LINUX: "linux-amd64"
   PLATFORM_NAME_WIN: "win64"
 
-  XTENSA_CLANG_TOOLCHAIN_BRANCH: "esp-20210702-r11.0.0"
+  XTENSA_CLANG_TOOLCHAIN_BRANCH: "esp-20210728-r12.0.1"
   GCC_REL_NAME: "gcc8_4_0-esp-2021r1"
   XTENSA_GCC_TOOLCHAIN_LINUX_TAR_GZ: "xtensa-esp32-elf-${GCC_REL_NAME}-linux-amd64.tar.gz"
   XTENSA_GCC_TOOLCHAIN_WIN_ZIP: "xtensa-esp32-elf-${GCC_REL_NAME}-win64.zip"
@@ -52,7 +52,7 @@ before_script:
 .get_release_name: &get_release_name |
   # using annotated tags
   REL_NUM=$(git describe --abbrev=7)
-  REL_SFX="llvm11_0_0"
+  REL_SFX="llvm12_0_1"
   REL_NAME=${CONF_TARGET}-${REL_SFX}-${REL_NUM}-${PLATFORM_NAME}
   ARCHIVE_NAME=${REL_NAME}.${ARCHIVE_EXT}
   echo "CONF_TARGET: $CONF_TARGET"

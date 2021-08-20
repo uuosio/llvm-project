@@ -76,6 +76,10 @@ before_script:
   git clone -b ${XTENSA_CLANG_TOOLCHAIN_BRANCH} ${GITLAB_SSH_SERVER}/${XTENSA_CLANG_TOOLCHAIN_REPO}
   cp -r xtensa-clang-toolchain/* .
 
+# LLVM Build System used the remote address to show detailed version info, we'll change it to the public repository
+.fix_origin_remote_for_public: &fix_origin_remote_for_public |
+  git remote set-url origin "${GH_REPO_HTTPS}"
+
  # Pack the toolchain
 .package_toolchain: &package_toolchain |
   ${ARCHIVE_TOOL} ${ARCHIVE_NAME} ${XTENSA_CLANG_TOOLCHAIN}/
@@ -92,6 +96,7 @@ build_clang_toolchain_linux:
     - PLATFORM_NAME=${PLATFORM_NAME_LINUX}
     - *get_release_name
     - *get_gcc_toolchain_linux
+    - *fix_origin_remote_for_public
     - *get_clang_toolchain_build_scripts
     - ./build-toolchain-linux.sh ${XTENSA_CLANG_TOOLCHAIN}
     - *package_toolchain
@@ -105,6 +110,7 @@ build_clang_toolchain_win:
     - PLATFORM_NAME=${PLATFORM_NAME_WIN}
     - *get_release_name
     - *get_gcc_toolchain_win
+    - *fix_origin_remote_for_public
     - *get_clang_toolchain_build_scripts
     - ./build-toolchain-win.sh ${XTENSA_CLANG_TOOLCHAIN}
     - *package_toolchain

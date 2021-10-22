@@ -3144,9 +3144,26 @@ llvm::Constant *CodeGenModule::GetOrCreateLLVMFunction(
     ForDefinition_t IsForDefinition) {
   const Decl *D = GD.getDecl();
 
+  bool isWasmImport = false;
+  bool isWasmEntry  = false;
+  bool isWasmABI    = false;
+  bool isWasmAction = false;
+  bool isWasmNotify = false;
+
   // Any attempts to use a MultiVersion function should result in retrieving
   // the iFunc instead. Name Mangling will handle the rest of the changes.
   if (const FunctionDecl *FD = cast_or_null<FunctionDecl>(D)) {
+     if (FD->hasAttr<EosioWasmImportAttr>())
+        isWasmImport = true;
+     if (FD->hasAttr<EosioWasmEntryAttr>())
+        isWasmEntry = true;
+     if (FD->hasAttr<EosioWasmABIAttr>())
+        isWasmABI = true;
+     if (FD->hasAttr<EosioWasmActionAttr>())
+        isWasmAction = true;
+     if (FD->hasAttr<EosioWasmNotifyAttr>())
+        isWasmNotify = true;
+
     // For the device mark the function as one that should be emitted.
     if (getLangOpts().OpenMPIsDevice && OpenMPRuntime &&
         !OpenMPRuntime->markAsGlobalTarget(GD) && FD->isDefined() &&
@@ -3264,6 +3281,25 @@ llvm::Constant *CodeGenModule::GetOrCreateLLVMFunction(
     llvm::AttrBuilder B(ExtraAttrs, llvm::AttributeList::FunctionIndex);
     F->addAttributes(llvm::AttributeList::FunctionIndex, B);
   }
+
+  if (isWasmImport)
+   F->addFnAttr("eosio_wasm_import", "true");
+
+  if (isWasmEntry)
+   F->addFnAttr("eosio_wasm_entry", "true");
+     
+  if (isWasmABI)
+     if (const FunctionDecl *FD = cast_or_null<FunctionDecl>(D)) {
+        F->addFnAttr("eosio_wasm_abi", FD->getWasmABI().c_str());
+     }
+  if (isWasmAction)
+     if (const FunctionDecl *FD = cast_or_null<FunctionDecl>(D)) {
+        F->addFnAttr("eosio_wasm_action", FD->getEosioWasmAction().c_str());
+     }
+  if (isWasmNotify)
+     if (const FunctionDecl *FD = cast_or_null<FunctionDecl>(D)) {
+        F->addFnAttr("eosio_wasm_notify", FD->getEosioWasmNotify().c_str());
+     }
 
   if (!DontDefer) {
     // All MSVC dtors other than the base dtor are linkonce_odr and delegate to

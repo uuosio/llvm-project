@@ -304,6 +304,10 @@ void ObjFile::parse(bool ignoreComdats) {
     }
   }
 
+  eosioABI     = wasmObj->get_eosio_abi().str();
+  eosioActions = wasmObj->actions();
+  eosioNotify  = wasmObj->notify();
+
   uint32_t sectionIndex = 0;
 
   // Bool for each symbol, true if called directly.  This allows us to implement
@@ -386,6 +390,14 @@ void ObjFile::parse(bool ignoreComdats) {
     }
     size_t idx = symbols.size();
     symbols.push_back(createUndefined(wasmSym, isCalledDirectly[idx]));
+    for (const auto& allowed : wasmObj->allowed_imports()) {
+       if (auto symName = sym.getName()) {
+          if (*symName == allowed) {
+             symtab->addAllowedUndefFunction(*symName);
+             break;
+          }
+       }
+    }
   }
 }
 

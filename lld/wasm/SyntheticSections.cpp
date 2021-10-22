@@ -57,7 +57,6 @@ public:
 
 void DylinkSection::writeBody() {
   raw_ostream &os = bodyOutputStream;
-
   writeUleb128(os, memSize, "MemSize");
   writeUleb128(os, memAlign, "MemAlign");
   writeUleb128(os, out.elemSec->numEntries(), "TableSize");
@@ -325,9 +324,20 @@ void GlobalSection::addGlobal(InputGlobal *global) {
 void ExportSection::writeBody() {
   raw_ostream &os = bodyOutputStream;
 
-  writeUleb128(os, exports.size(), "export count");
-  for (const WasmExport &export_ : exports)
-    writeExport(os, export_);
+  std::vector<WasmExport> filtered_exports;
+  for (const WasmExport &export_ : exports) {
+    if (config->should_export(export_)) {
+      filtered_exports.push_back(export_);
+    }
+  }
+
+  writeUleb128(os, filtered_exports.size(), "export count");
+  for (const WasmExport &export_ : filtered_exports)
+      writeExport(os, export_);
+
+  // writeUleb128(os, exports.size(), "export count");
+  // for (const WasmExport &export_ : exports)
+  //   writeExport(os, export_);
 }
 
 bool StartSection::isNeeded() const {

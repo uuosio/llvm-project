@@ -4425,6 +4425,8 @@ bool RecordDecl::isInjectedClassName() const {
     cast<RecordDecl>(getDeclContext())->getDeclName() == getDeclName();
 }
 
+bool RecordDecl::isEosioIgnore() const { return hasAttr<EosioIgnoreAttr>(); }
+
 bool RecordDecl::isLambda() const {
   if (auto RD = dyn_cast<CXXRecordDecl>(this))
     return RD->isLambda();
@@ -4720,6 +4722,15 @@ ImplicitParamDecl *ImplicitParamDecl::Create(ASTContext &C, DeclContext *DC,
                                              ImplicitParamKind ParamKind) {
   return new (C, DC) ImplicitParamDecl(C, DC, IdLoc, Id, Type, ParamKind);
 }
+
+bool FunctionDecl::isEosioWasmABI()const { return hasAttr<EosioWasmABIAttr>(); }
+std::string FunctionDecl::getWasmABI()const { return getAttr<EosioWasmABIAttr>()->getAbi().str(); }
+bool FunctionDecl::isEosioWasmEntry()const { return hasAttr<EosioWasmEntryAttr>(); }
+bool FunctionDecl::isEosioWasmImport()const { return hasAttr<EosioWasmImportAttr>(); }
+bool FunctionDecl::isEosioWasmAction()const { return hasAttr<EosioWasmActionAttr>(); }
+std::string FunctionDecl::getEosioWasmAction()const { return getAttr<EosioWasmActionAttr>()->getName().str(); }
+bool FunctionDecl::isEosioWasmNotify()const { return hasAttr<EosioWasmNotifyAttr>(); }
+std::string FunctionDecl::getEosioWasmNotify()const { return getAttr<EosioWasmNotifyAttr>()->getName().str(); }
 
 ImplicitParamDecl *ImplicitParamDecl::Create(ASTContext &C, QualType Type,
                                              ImplicitParamKind ParamKind) {

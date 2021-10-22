@@ -504,6 +504,10 @@ static Symbol *handleUndefined(StringRef name) {
   return sym;
 }
 
+static Symbol* addUndefined(StringRef name) {
+   return symtab->addUndefinedFunction(name, Optional<StringRef>(), Optional<StringRef>(), 0, nullptr, nullptr, false);
+}
+
 static void handleLibcall(StringRef name) {
   Symbol *sym = symtab->find(name);
   if (!sym)
@@ -556,9 +560,15 @@ static void createSyntheticSymbols() {
                                                             true};
   static llvm::wasm::WasmGlobalType mutableGlobalTypeI64 = {WASM_TYPE_I64,
                                                             true};
+  static WasmSignature entrySignature = config->otherModel ? nullSignature : WasmSignature{{}, {ValType::I64, ValType::I64, ValType::I64}};
+
   WasmSym::callCtors = symtab->addSyntheticFunction(
       "__wasm_call_ctors", WASM_SYMBOL_VISIBILITY_HIDDEN,
       make<SyntheticFunction>(nullSignature, "__wasm_call_ctors"));
+
+    WasmSym::entryFunc = symtab->addSyntheticFunction(
+          config->entry, WASM_SYMBOL_VISIBILITY_DEFAULT | WASM_SYMBOL_BINDING_WEAK,
+          make<SyntheticFunction>(entrySignature, config->entry));
 
   if (config->isPic) {
     // For PIC code we create a synthetic function __wasm_apply_relocs which
@@ -616,11 +626,14 @@ static void createOptionalSymbols() {
 
   WasmSym::dsoHandle = symtab->addOptionalDataSymbol("__dso_handle");
 
-  if (!config->shared)
+  if (!config->shared) {
+    config->exportedSymbols.insert("__data_end");
     WasmSym::dataEnd = symtab->addOptionalDataSymbol("__data_end");
+  }
 
   if (!config->isPic) {
     WasmSym::globalBase = symtab->addOptionalDataSymbol("__global_base");
+    config->exportedSymbols.insert("__heap_base");
     WasmSym::heapBase = symtab->addOptionalDataSymbol("__heap_base");
     WasmSym::definedMemoryBase = symtab->addOptionalDataSymbol("__memory_base");
     WasmSym::definedTableBase = symtab->addOptionalDataSymbol("__table_base");
@@ -669,10 +682,10 @@ struct WrappedSymbol {
   Symbol *wrap;
 };
 
-static Symbol *addUndefined(StringRef name) {
-  return symtab->addUndefinedFunction(name, None, None, WASM_SYMBOL_UNDEFINED,
-                                      nullptr, nullptr, false);
-}
+// static Symbol *addUndefined(StringRef name) {
+//   return symtab->addUndefinedFunction(name, None, None, WASM_SYMBOL_UNDEFINED,
+//                                       nullptr, nullptr, false);
+// }
 
 // Handles -wrap option.
 //
@@ -835,6 +848,15 @@ void LinkerDriver::link(ArrayRef<const char *> argsArr) {
 
   createOptionalSymbols();
 
+  // Is the entry symbol found
+  for (ObjFile *file : symtab->objectFiles) {
+    for (Symbol *sym : file->getSymbols()) {
+       if (toString(*sym) == config->entry) {
+          symtab->entryIsUndefined = false;
+       }
+     }
+  }
+
   if (errorCount())
     return;
 
@@ -861,6 +883,37 @@ void LinkerDriver::link(ArrayRef<const char *> argsArr) {
   symtab->addCombinedLTOObject();
   if (errorCount())
     return;
+
+  auto get_kind = [](const char* str) -> uint8_t {
+     if (strcmp(str, "function") == 0)
+        return 0;
+     else if (strcmp(str, "table") == 0)
+        return 1;
+     else if (strcmp(str, "memory") == 0)
+        return 2;
+     return 3;
+  };
+
+  auto get_first = [](const std::string& exp) {
+     return exp.substr(0, exp.find(":"));
+  };
+
+  auto get_second = [](const std::string& exp) {
+     return exp.substr(exp.find(":")+1);
+  };
+
+  std::vector<char*> exportStrs;
+  for (auto* arg : args.filtered(OPT_only_export)) {
+     auto name = get_first(std::string(arg->getValue()));
+     char* cname = new char[name.size()];
+     memcpy(cname, name.c_str(), name.size());
+     exportStrs.push_back(cname);
+     if (!name.empty()) {
+        auto type = get_second(std::string(arg->getValue()));
+        WasmExport we = {cname, get_kind(type.c_str()), 0};
+        config->exports.push_back(we);
+     }
+  }
 
   // Resolve any variant symbols that were created due to signature
   // mismatchs.
@@ -898,6 +951,9 @@ void LinkerDriver::link(ArrayRef<const char *> argsArr) {
 
   // Write the result to the file.
   writeResult();
+  // clean up
+  for (const auto* cp : exportStrs)
+     delete[] cp;
 }
 
 } // namespace wasm

@@ -7,6 +7,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "Relocations.h"
+#include "SymbolTable.h"
 
 #include "InputChunks.h"
 #include "SyntheticSections.h"
@@ -26,8 +27,10 @@ static bool allowUndefined(const Symbol* sym) {
   if (auto *F = dyn_cast<UndefinedFunction>(sym))
     if (F->importName)
       return true;
-  return (config->allowUndefined ||
-          config->allowUndefinedSymbols.count(sym->getName()) != 0);
+  bool isConfigAllowed = config->allowUndefined || config->allowUndefinedSymbols.count(sym->getName()) != 0;
+  bool isAllowed = symtab->allowed.count(sym->getName());
+
+  return isConfigAllowed || isAllowed;
 }
 
 static void reportUndefined(const Symbol* sym) {

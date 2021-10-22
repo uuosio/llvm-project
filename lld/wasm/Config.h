@@ -13,6 +13,7 @@
 #include "llvm/ADT/StringSet.h"
 #include "llvm/BinaryFormat/Wasm.h"
 #include "llvm/Support/CachePruning.h"
+#include "llvm/Object/Wasm.h"
 
 namespace lld {
 namespace wasm {
@@ -60,6 +61,9 @@ struct Configuration {
   llvm::StringRef entry;
   llvm::StringRef outputFile;
   llvm::StringRef thinLTOCacheDir;
+  llvm::StringRef abiOutputFile;
+  std::vector<llvm::wasm::WasmExport> exports;
+  bool otherModel;
 
   llvm::StringSet<> allowUndefinedSymbols;
   llvm::StringSet<> exportedSymbols;
@@ -72,7 +76,13 @@ struct Configuration {
 
   // True if we are creating position-independent code.
   bool isPic;
-
+  inline bool should_export(const llvm::wasm::WasmExport& ex)const {
+     for (const auto& x : exports) {
+        if ((memcmp(x.Name.str().c_str(), ex.Name.str().c_str(), ex.Name.size()) == 0 || x.Name.str()[0] == '*') && x.Kind == ex.Kind)
+           return true;
+     }
+     return false;
+  }
   // The table offset at which to place function addresses.  We reserve zero
   // for the null function pointer.  This gets set to 1 for executables and 0
   // for shared libraries (since they always added to a dynamic offset at

@@ -1093,6 +1093,48 @@ Sample usage:
   }];
 }
 
+def EosioIgnoreDocs : Documentation {
+  let Category = DocCatFunction;
+  let Content = [{
+The ``eosio::ignore`` attribute marks a template struct as an ignorable type.
+  }];
+}
+
+def EosioRicardianDocs : Documentation {
+  let Category = DocCatFunction;
+  let Content = [{
+The ``eosio::ricardian`` attribute specifies filename of ricardian contract.
+  }];
+}
+
+def EosioContractDocs : Documentation {
+  let Category = DocCatFunction;
+  let Content = [{
+The ``eosio::contract`` attribute marks a method as being an eosio contract.
+  }];
+}
+
+def EosioWasmImportDocs : Documentation {
+  let Category = DocCatFunction;
+  let Content = [{
+The ``eosio::wasm_import`` attribute marks a function as a wasm import.
+  }];
+}
+
+def EosioActionDocs : Documentation {
+  let Category = DocCatFunction;
+  let Content = [{
+The ``eosio::action`` attribute marks a method as being an eosio action.
+  }];
+}
+
+def EosioTableDocs : Documentation {
+  let Category = DocCatFunction;
+  let Content = [{
+The ``eosio::table`` attribute marks a record as being an eosio table.
+  }];
+}
+
 def NoSplitStackDocs : Documentation {
   let Category = DocCatFunction;
   let Content = [{

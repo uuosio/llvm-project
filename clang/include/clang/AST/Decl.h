@@ -1983,6 +1983,15 @@ public:
 
   void setRangeEnd(SourceLocation E) { EndRangeLoc = E; }
 
+  bool isEosioWasmABI()const;
+  std::string getWasmABI()const;
+  bool isEosioWasmEntry()const;
+  bool isEosioWasmImport()const;
+  bool isEosioWasmAction()const;
+  std::string getEosioWasmAction()const;
+  bool isEosioWasmNotify()const;
+  std::string getEosioWasmNotify()const;
+
   /// Returns the location of the ellipsis of a variadic function.
   SourceLocation getEllipsisLoc() const {
     const auto *FPT = getType()->getAs<FunctionProtoType>();
@@ -3601,6 +3610,8 @@ public:
     return const_cast<EnumDecl*>(this)->getMostRecentDecl();
   }
 
+  bool isEosioIgnore() const;
+
   EnumDecl *getDefinition() const {
     return cast_or_null<EnumDecl>(TagDecl::getDefinition());
   }
@@ -3820,6 +3831,8 @@ public:
   const RecordDecl *getMostRecentDecl() const {
     return const_cast<RecordDecl*>(this)->getMostRecentDecl();
   }
+
+  bool isEosioIgnore() const;
 
   bool hasFlexibleArrayMember() const {
     return RecordDeclBits.HasFlexibleArrayMember;

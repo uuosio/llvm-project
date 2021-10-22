@@ -98,6 +98,30 @@ void MarkLive::run() {
   if (config->isPic)
     enqueue(WasmSym::callCtors);
 
+  for (const ObjFile* obj : symtab->objectFiles) {
+     const auto& wasmObj = obj->getWasmObj();
+     for (const auto& func : wasmObj->functions()) {
+        for (const auto& action : wasmObj->actions()) {
+           if (func.SymbolName == action.substr(action.find(":")+1)) {
+              enqueue(symtab->find(func.SymbolName));
+           }
+           if (func.SymbolName == "pre_dispatch" || func.SymbolName == "post_dispatch" || func.SymbolName == "eosio_assert_code" ||
+               func.SymbolName == "eosio_set_contract_name") {
+              enqueue(symtab->find(func.SymbolName));
+           }
+        }
+        for (const auto& notify : wasmObj->notify()) {
+           std::string sub = notify.substr(notify.find(":")+2).str();
+           if (func.SymbolName == sub.substr(sub.find(":")+1)) {
+              enqueue(symtab->find(func.SymbolName));
+           }
+        }
+     }
+     for (const auto& import : wasmObj->imports()) {
+        enqueue(symtab->find(import.Field));
+     }
+  }
+
   if (config->sharedMemory && !config->shared)
     enqueue(WasmSym::initMemory);
 

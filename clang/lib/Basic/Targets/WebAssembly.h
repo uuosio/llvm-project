@@ -56,9 +56,9 @@ public:
     MaxAtomicPromoteWidth = MaxAtomicInlineWidth = 64;
     // size_t being unsigned long for both wasm32 and wasm64 makes mangled names
     // more consistent between the two.
-    SizeType = UnsignedInt;
-    PtrDiffType = SignedInt;
-    IntPtrType = SignedInt;
+    SizeType = UnsignedLong;
+    PtrDiffType = SignedLong;
+    IntPtrType = SignedLong;
   }
 
   StringRef getABI() const override;

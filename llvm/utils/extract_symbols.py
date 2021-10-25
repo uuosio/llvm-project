@@ -507,3 +507,6 @@ if __name__ == '__main__':
         template_count = template_function_count[template_function_mapping[k]]
         if v == 1 and template_count < 100:
             print(k, file=outfile)
+    if args.mangling == 'microsoft':
+        if args.o.endswith('clang.symbols'):
+            print('?GeneralCategory@cl@llvm@@3VOptionCategory@12@A', file=outfile)

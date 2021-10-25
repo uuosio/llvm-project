@@ -16,5 +16,5 @@ add_llvm_library( LLVMEosioSoftfloat MODULE BUILDTREE_ONLY
   DEPENDS
   intrinsics_gen
   PLUGIN_TOOL
-  opt
+  clang
   )
